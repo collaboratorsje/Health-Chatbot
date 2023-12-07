@@ -31,7 +31,7 @@ class ChatBot:
 
     def display_information(self, facility_type, postal_code):
         matching_info = []
-        with open('data_clean/clean_healthCare_data.csv', 'r') as file:
+        with open('../data_clean/clean_healthCare_data.csv', 'r') as file:
             reader = csv.reader(file)
             next(reader)  # Skip the header row
             for row in reader:
@@ -102,7 +102,7 @@ def get_data():
     matching_info = []
     try:
         #print("file before")
-        with open('data_clean/clean_healthCare_data.csv', 'r') as file:
+        with open('../data_clean/clean_healthCare_data.csv', 'r') as file:
             #print("file oppened")
             reader = csv.reader(file)
             next(reader)  # Skip the header row
