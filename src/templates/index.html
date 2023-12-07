@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Healthcare Chatbot</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #d2cfcf;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 10px;
+            background-color: #8c00ff; /* Title background color */
+            color: rgb(7, 7, 7); /* Title text color */
+            padding: 40px; /* Add padding for title */
+            width: 100%; /* Full width for title */
+            box-sizing: border-box; /* Include padding in width */
+        }
+        #content {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 20px;
+            width: 100%; /* Full width for content */
+            box-sizing: border-box; /* Include padding in width */
+        }
+        #about-section {
+            flex: 1;
+            padding-left: 20px; /* Add some left padding for spacing */
+            background-color: #d2cfcf; /* Background color for the content */
+            padding: 100px; /* Add padding for content */
+        }
+        #map-link {
+            margin-top: auto;
+            margin-left: 20px; /* Add some left margin for spacing */
+        }
+        #chat-container {
+            max-width: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            margin-left: auto;
+            margin-top: 100px;
+        }
+        #chat-log {
+            height: 400px;
+            overflow-y: scroll;
+            padding: 10px;
+            background-color: #fff;
+        }
+        .user-message {
+            text-align: right;
+            color: #000;
+        }
+        .user-message strong {
+            color: #008000; /* Green "You:" label */
+            font-weight: bold;
+        }
+        .bot-message {
+            background-color: #ddd;
+            color: #000; /* Black text color */
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+        .bot-message strong {
+            color: #007bff; /* Blue "Bot:" label */
+            font-weight: bold;
+        }
+        #user-input {
+            width: calc(100% - 0px);
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            margin-right: 8px;
+        }
+        #postal-code {
+            width: calc(100% - 80px);
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            margin-right: 8px;
+        }
+        #another-interaction-input {
+            width: calc(100% - 80px);
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            margin-right: 8px;
+        }
+        #submit-btn {
+            padding: 8px 16px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        #submit-btn:hover {
+            background-color: #0056b3;
+        }
+        #submit-postal-code {
+            padding: 8px 16px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        #submit-postal-code:hover {
+            background-color: #0056b3;
+        }
+        #submit-another-interaction {
+            padding: 8px 16px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        #submit-another-interaction:hover {
+            background-color: #0056b3;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>HEALTH CLINIC LOCATOR</h1>
+    <div id="content">
+        <div id="about-section">
+            <h2>ABOUT:</h2>
+            <p>
+                Jarvis is a healthcare chatbot designed to assist in locating health clinics. 
+                Enter your name, select a facility type, and provide a postal code to find relevant healthcare information.
+            </p>
+            <p>
+                To view a map with clinic locations, <a href="map.html" target="_blank" id="view-map">click here</a>.
+            </p>
+        </div>
+        <div id="chat-container">
+            <div id="chat-log">
+                <div class="bot-message"><strong>Bot:</strong> Hi! I am Jarvis, a healthcare chatbot.</div>
+                <div class="bot-message"><strong>Bot:</strong> Please enter your name.</div>
+            </div>
+            <div id="user-input-container">
+                <div>
+                    <input type="text" id="user-input" placeholder="Type your message...">
+                    <button id="submit-btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatLog = document.getElementById('chat-log');
+            const userInput = document.getElementById('user-input');
+            const submitBtn = document.getElementById('submit-btn');
+
+            function displayUserMessage(message) {
+                chatLog.innerHTML += `<div class="user-message"><strong>You:</strong> ${message}</div>`;
+                chatLog.scrollTop = chatLog.scrollHeight;
+            }
+
+            function displayBotMessage(message) {
+                chatLog.innerHTML += `<div class="bot-message">${message}</div>`;
+                chatLog.scrollTop = chatLog.scrollHeight;
+            }
+            let userMessage;
+            submitBtn.addEventListener('click', function() {
+                userMessage = userInput.value.trim();
+                if (!/^[a-zA-Z]{1,15}$/.test(userMessage)) {
+                    displayBotMessage('Please enter a valid user name (1-15 characters, alphabets only).');
+                    document.getElementById('user-input').value = '';
+                    return;
+                }
+                displayUserMessage(userMessage);
+                userInput.value = '';
+
+                if (!document.getElementById('user-name')) {
+                    displayBotMessage(`Hello, ${userMessage}!`);
+                   askForFacilityType(userMessage);
+                }
+            });
+
+            function askForFacilityType(userMessage) {
+                displayBotMessage(`<br>Please select a facility type:<br><br>
+                    <input type="radio" id="general-physician" name="facility-type" value="General Physician">
+                    <label for="general-physician">General Physician</label><br>
+                    
+                    <input type="radio" id="dentist" name="facility-type" value="Dentist">
+                    <label for="dentist">Dentist</label><br>
+                    
+                    <input type="radio" id="eye-specialist" name="facility-type" value="Eye specialist">
+                    <label for="eye-specialist">Eye Specialist</label><br>
+                    
+                    <input type="radio" id="cardiologist" name="facility-type" value="Cardiologist">
+                    <label for="cardiologist">Cardiologist</label><br>
+                    
+                    <input type="radio" id="pediatrician" name="facility-type" value="Pediatrician">
+                    <label for="pediatrician">Pediatrician</label><br>
+                    `);
+
+                    document.querySelectorAll('input[name="facility-type"]').forEach(function(radio) {
+                        radio.addEventListener('change', function() {
+                            const selectedFacilityType = this.value;
+                            displayBotMessage(`<div class="bot-message"><strong>Bot:</strong> You have selected: ${selectedFacilityType}<br><br>Please enter the postal code</div>`);
+                            document.getElementById('user-input-container').innerHTML = `<input type="text" id="postal-code" placeholder="Type your message...."><button id="submit-postal-code">Send</button>`;
+                            
+                            document.getElementById('submit-postal-code').addEventListener('click', function() {
+                                const postalCode = document.getElementById('postal-code').value;
+                                if (!postalCode || !/^\d{6}$/.test(postalCode)) {
+                                    displayBotMessage('Please enter a valid 6-digit postal code.');
+                                    document.getElementById('postal-code').value = '';
+                                } else {
+                                    displayUserMessage(postalCode);
+                                    document.getElementById('postal-code').value = '';
+
+                                    fetch(`http://localhost:5050/get_data?facility_type=${selectedFacilityType}&postal_code=${postalCode}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.hasOwnProperty('data') && Array.isArray(data.data) && data.data.length > 0) {
+                                                displayBotMessage(`<strong>Bot:</strong> Here is the information based on your selection:<br>`);
+                                                data.data.forEach(info => {
+                                                    displayBotMessage(`Hospital Name: ${info['Hospital Name']}<br>
+                                                                      Hospital Type: ${info['Hospital Type']}<br>
+                                                                      Address: ${info['Address']}<br>
+                                                                      City: ${info['City']}<br>
+                                                                      State: ${info['State']}<br>
+                                                                      Postal Code: ${info['Postal Code']}<br>
+                                                                      Email: ${info['Email']}<br>
+                                                                      Contact Number: ${info['Contact Number']}<br>
+                                                                      Rating: ${info['Rating']}<br>
+                                                                      Doctor's Name: ${info['Doctor\'s Name']}<br>
+                                                                      Insurance: ${info['Insurance']}<br>
+                                                                      Emergency Services: ${info['Emergency Services']}<br>
+                                                                      Opening Hours: ${info['Opening Hours']}<br>
+                                                                      Website URL: <a href="${info['Website URL']}" target="_blank">${info['Website URL']}</a><br><br>`);
+                                                });
+                                                
+                                                askAnotherInteraction(); // Call the function to ask for another interaction
+                                            } else {
+                                                displayBotMessage(`<div class="bot-message"><strong>Bot:</strong> No information found for the selected facility type and postal code.</div>`);
+                                                askAnotherInteraction(); // Call the function to ask for another interaction
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                            displayBotMessage(`<strong>Bot:</strong> An error occurred while fetching data.`);
+                                            askAnotherInteraction(); // Call the function to ask for another interaction
+                                        });
+                                }
+                            });
+                        });
+                    });
+            }
+
+            function askAnotherInteraction() {
+                displayBotMessage(`<div class="bot-message"><strong>Bot:</strong> Do you want to have another interaction? (yes/no):</div>`);
+                document.getElementById('user-input-container').innerHTML = `<input type="text" id="another-interaction-input" placeholder="Type your response...."><button id="submit-another-interaction">Send</button>`;
+
+                document.getElementById('submit-another-interaction').addEventListener('click', function() {
+                    const anotherInteraction = document.getElementById('another-interaction-input').value.trim().toLowerCase();
+                    if (anotherInteraction === 'yes') {
+                        displayBotMessage(`<div class="bot-message"><strong>Bot:</strong> Great! Let's start another interaction.</div>`);
+                        askForFacilityType();
+                    } else if (anotherInteraction === 'no') {
+                        displayBotMessage(`<div class="bot-message"><strong>Bot:</strong> Thank you for using the Health Care Chatbot. Goodbye!</div>`);
+                        document.getElementById('another-interaction-input').value = '';
+                    } else {
+                        displayBotMessage(`<div class="bot-message"><strong>Bot:</strong> Invalid response. Please enter 'yes' or 'no'.</div>`);
+                        userInput.value = '';
+                        document.getElementById('another-interaction-input').value = '';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
