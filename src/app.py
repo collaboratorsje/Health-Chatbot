@@ -5,6 +5,8 @@ from flask_cors import CORS  # Import CORS from flask_cors
 app = Flask(__name__)
 CORS(app)  # Enable CORS for your Flask app
 
+hospital_info = {}
+
 class ChatBot:
     def __init__(self):
         self.user_name = ""
@@ -15,7 +17,7 @@ class ChatBot:
         if not self.user_name:
             self.user_name = user_message.strip()
             response = f"Hello, {self.user_name}! Please select a facility type:"
-        elif not self.facility_atype:
+        elif not self.facility_type:
             self.facility_type = user_message.strip()
             response = f"You selected: {self.facility_type}. Please enter your postal code:"
         elif user_message.isdigit() and len(user_message) == 6:
@@ -85,7 +87,13 @@ def index():
 
 @app.route('/map')  # Define a new route for the map view
 def map_view():
-    return render_template('map.html')  # Serve the map.html file when the user navigates to /map_view
+    facility_type = request.args.get('facility_type')
+    postal_code = request.args.get('postal_code')
+
+    # Use the global hospital_info dictionary
+    global hospital_info
+
+    return render_template('map.html', hospital_info=hospital_info)
 
 @app.route('/submit_message', methods=['POST'])
 def submit_message():
@@ -124,11 +132,16 @@ def get_data():
                         'Insurance': row[11],
                         'Emergency Services': row[12],
                         'Opening Hours': row[13],
+                        'Latitude': row[14],
+                        'Longitude': row[15],
                         'Website URL': row[16]
                     })
 
         if matching_info:
             matching_info = sorted(matching_info, key=lambda x: float(x['Rating']), reverse=True)
+            global hospital_info
+            hospital_info = matching_info
+            print(f'\nstart\n {hospital_info} \nend\n')
             return jsonify({'data': matching_info})
         else:
             return jsonify({'data': []})

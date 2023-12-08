@@ -22,53 +22,40 @@
         // Add this after your existing JavaScript code
 
         document.addEventListener('DOMContentLoaded', function() {
-        // Your existing code...
+            // Your existing code...
 
-        // Function to display hospitals on map
-        function displayHospitalsOnMap(hospitalsData) {
-            // Create a map centered at a specific location
-            const map = L.map('map').setView([17.3850, 78.4867], 10); // Set your desired initial coordinates and zoom level
+            // Function to display hospitals on map
+            function displayHospitalsOnMap(hospitalsData) {
+                // Create a map centered at a specific location
+                const map = L.map('map').setView([17.3850, 78.4867], 10); // Set your desired initial coordinates and zoom level
 
-            // Add a tile layer to the map (OpenStreetMap tiles used here)
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-        }).addTo(map);
+                // Add a tile layer to the map (OpenStreetMap tiles used here)
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                }).addTo(map);
 
-        // Loop through hospitals data and add markers for each hospital
-        hospitalsData.forEach(hospital => {
-            const { 'Hospital Name': name, Address, 'Contact Number': contact, Latitude, Longtitude } = hospital;
+                // Loop through hospitals data and add markers for each hospital
+                hospitalsData.forEach(hospital => {
+                    const { 'Hospital Name': name, Address, 'Contact Number': contact, Latitude, Longitude } = hospital;
 
-            // Create a marker for each hospital and add it to the map
-            const marker = L.marker([parseFloat(Latitude), parseFloat(Longtitude)]).addTo(map);
-            
-            // Create a popup for the marker to display hospital information
-            marker.bindPopup(`
-                <b>${name}</b><br>
-                Address: ${Address}<br>
-                Contact: ${contact}<br>
-            `);
+                    // Create a marker for each hospital and add it to the map
+                    const marker = L.marker([parseFloat(Latitude), parseFloat(Longitude)]).addTo(map);
+
+                    // Create a popup for the marker to display hospital information
+                    marker.bindPopup(`
+                        <b>${name}</b><br>
+                        Address: ${Address}<br>
+                        Contact: ${contact}<br>
+                    `);
+                });
+            }
+
+            // Retrieve hospital data from the Flask app's global variable
+            const hospitalDataFromFlask = JSON.parse('{{ hospital_info|tojson|safe }}');
+
+            // Call the function to display hospitals on the map using the data from Flask
+            displayHospitalsOnMap(hospitalDataFromFlask);
         });
-    }
-
-        // Function to fetch hospital data and display on map
-        function fetchAndDisplayHospitalsOnMap() {
-        fetch('http://localhost:5050/get_data')
-            .then(response => response.json())
-            .then(data => {
-                if (data.hasOwnProperty('data') && Array.isArray(data.data) && data.data.length > 0) {
-                    displayHospitalsOnMap(data.data);
-                } else {
-                    console.log('No hospital data found.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    // Call the function to fetch hospital data and display on map
-    fetchAndDisplayHospitalsOnMap();
-});
 
     </script>
 </body>
