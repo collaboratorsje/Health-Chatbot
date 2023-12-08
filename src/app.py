@@ -93,6 +93,7 @@ def index():
 
 @app.route('/map')  # Define a new route for the map view
 def map_view():
+    # gets queries from request url and assigns to variables
     facility_type = request.args.get('facility_type')
     postal_code = request.args.get('postal_code')
 
