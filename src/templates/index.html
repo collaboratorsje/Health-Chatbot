@@ -157,6 +157,7 @@
 
 
     <script>
+        /*code to execute after the DOM content is loaded using addEvent Listener*/
         document.addEventListener('DOMContentLoaded', function() {
             const chatLog = document.getElementById('chat-log');
             const userInput = document.getElementById('user-input');
@@ -171,19 +172,19 @@
                 chatLog.innerHTML += `<div class="bot-message">${message}</div>`;
                 chatLog.scrollTop = chatLog.scrollHeight;
             }
-            let userMessage;
+            let userMessage;    /*Initializing a userMessage variable */
             submitBtn.addEventListener('click', function() {
                 userMessage = userInput.value.trim();
                 if (!/^[a-zA-Z]{1,15}$/.test(userMessage)) {
                     displayBotMessage('Please enter a valid user name (1-15 characters, alphabets only).');
-                    document.getElementById('user-input').value = '';
+                    document.getElementById('user-input').value = '';   /*clears the output */
                     return;
                 }
                 displayUserMessage(userMessage);
                 userInput.value = '';
 
                 if (!document.getElementById('user-name')) {
-                    displayBotMessage(`Hello, ${userMessage}!`);
+                    displayBotMessage(`Hello, ${userMessage}!`);    /* Works as a first message when there is no id with user-name */
                    askForFacilityType(userMessage);
                 }
             });

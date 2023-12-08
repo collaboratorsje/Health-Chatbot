@@ -1,19 +1,25 @@
+#Importing Flask class from the flask web framework, render_templates(which generates HTML pages dynamically), 
+#request(to access incoming request), jsonif(to create JSON response)
 from flask import Flask, render_template, request, jsonify
 import csv
-from flask_cors import CORS  # Import CORS from flask_cors
+# Import CORS from flask_cors(extension of flask)
+from flask_cors import CORS  
 
+#Initializing the flask app by creating an instance of the flask web application
 app = Flask(__name__)
-CORS(app)  # Enable CORS for your Flask app
-
+# Enable CORS for  Flask app to permit diff domains 
+CORS(app)  
+#creating a hospital_info empty global dictionary
 hospital_info = {}
-
+#creating a class called ChatBot
 class ChatBot:
-    def __init__(self):
-        self.user_name = ""
+    def __init__(self):     #Defining a init method(consturctor for instances)
+        self.user_name = ""     #Initializing instance variables 
         self.facility_type = ""
 
-    def handle_message(self, user_message):
-        response = ""
+    def handle_message(self, user_message):     #creating a handle_message method that handles user message
+
+        response = ""       #initializing an empty "response" string 
         if not self.user_name:
             self.user_name = user_message.strip()
             response = f"Hello, {self.user_name}! Please select a facility type:"
@@ -32,10 +38,10 @@ class ChatBot:
         return response
 
     def display_information(self, facility_type, postal_code):
-        matching_info = []
-        # test
+        matching_info = []      #initializing an empty list to store dictionaries 
+         # reading a csv file
         with open('data_clean/clean_healthCare_data.csv', 'r') as file:
-            reader = csv.reader(file)
+            reader = csv.reader(file)   #reading the file content
             next(reader)  # Skip the header row
             for row in reader:
                 if row[10] == facility_type and row[5] == postal_code:
@@ -58,7 +64,7 @@ class ChatBot:
 
         if matching_info:
             matching_info = sorted(matching_info, key=lambda x: float(x['Rating']), reverse=True)
-            info = "Here is information for your selection:\n"
+            info = "Here is information for your selection:\n"      #initializing the info variable
             for row in matching_info:
                 info += '\n'
                 info += f"Hospital Name: {row['Hospital Name']}\n"
@@ -79,8 +85,8 @@ class ChatBot:
         else:
             return None
 
-chatbot = ChatBot()
-
+chatbot = ChatBot()     #creating an instance or object of chatbot class
+#Defining a route for the root URL of the web application.
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -95,11 +101,11 @@ def map_view():
 
     return render_template('map.html', hospital_info=hospital_info)
 
-@app.route('/submit_message', methods=['POST'])
+@app.route('/submit_message', methods=['POST'])     #receives a user message as a post request
 def submit_message():
-    user_message = request.form['user_message']
-    response = chatbot.handle_message(user_message)
-    return jsonify({'bot_response': response})
+    user_message = request.form['user_message']     #retrives the user message as a form data 
+    response = chatbot.handle_message(user_message) #process the message using chatbot object
+    return jsonify({'bot_response': response})      #converts the bot resonse into JSON
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
@@ -116,7 +122,7 @@ def get_data():
             reader = csv.reader(file)
             next(reader)  # Skip the header row
             for row in reader:
-                print(row[10], facility_type, len(row[10]), len(facility_type))
+                #print(row[10], facility_type, len(row[10]), len(facility_type))
                 if row[10] == facility_type and row[5] == postal_code:
                     matching_info.append({
                         'Hospital Name': row[0],
