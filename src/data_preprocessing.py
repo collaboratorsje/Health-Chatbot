@@ -8,17 +8,17 @@ import pandas as pd
 import csv
 
 # Load the Excel file into a Pandas DataFrame
-excel_file = 'data_raw/raw_healthCare_data.xlsx'  # Replace with your Excel file name
+excel_file = 'data_raw/raw_healthCare_data.xlsx' 
 data = pd.read_excel(excel_file)
 
 # Save the DataFrame to a CSV file
-csv_file = 'data_raw/raw_healthCare_data.csv'  # Replace with your desired CSV file name
+csv_file = 'data_raw/raw_healthCare_data.csv' 
 data.to_csv(csv_file, index=False, encoding='utf-8-sig')  # Set index=False to avoid writing row indices
 
 
 # Load the CSV file into a pandas DataFrame with the specified encoding
 file_path = 'data_raw/raw_healthCare_data.csv'
-encoding = 'utf-8-sig'  # Replace with the appropriate encoding
+encoding = 'utf-8-sig'
 df_health = pd.read_csv(file_path, encoding=encoding)
 
 df_health = df_health.replace('’', "'", regex=True)
@@ -53,9 +53,6 @@ df_health.rename(columns={'Hospital Name': 'hospital_name',
                     'Opening Hours' : 'opening_hours',
                     'Web site URL' : 'website_url'}, inplace=True)
 print(df_health.head())
-
-# Display the DataFrame without the "S.No" column
-#df_health = df_health.drop(columns=["S.No"])
 
 # Save the cleaned DataFrame directly to a new CSV file, strip leading spaces during save
 output_file = 'data_clean/clean_healthCare_data.csv'
