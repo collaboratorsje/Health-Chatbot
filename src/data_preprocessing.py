@@ -54,7 +54,7 @@ df_health.rename(columns={'Hospital Name': 'hospital_name',
                     'Web site URL' : 'website_url'}, inplace=True)
 print(df_health.head())
 
-# Save the cleaned DataFrame directly to a new CSV file, strip leading spaces during save
+# Save the cleaned DataFrame directly to a new CSV file
 output_file = 'data_clean/clean_healthCare_data.csv'
 df_health.to_csv(output_file, index=False, sep=',', quoting=csv.QUOTE_MINIMAL, quotechar='"', escapechar='\\', encoding='utf-8-sig')
 

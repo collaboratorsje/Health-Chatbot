@@ -187,8 +187,9 @@
                    askForFacilityType(userMessage);
                 }
             });
-
+            //// Function to ask user for facility type
             function askForFacilityType(userMessage) {
+                // Display message with options for facility types
                 displayBotMessage(`<br>Please select a facility type:<br><br>
                     <input type="radio" id="general-physician" name="facility-type" value="General Physician">
                     <label for="general-physician">General Physician</label><br>
@@ -205,21 +206,26 @@
                     <input type="radio" id="pediatrician" name="facility-type" value="Pediatrician">
                     <label for="pediatrician">Pediatrician</label><br>
                     `);
-
+                     /* Add event listener to each radio input*/
                     document.querySelectorAll('input[name="facility-type"]').forEach(function(radio) {
                         radio.addEventListener('change', function() {
-                            const selectedFacilityType = this.value;
+                            const selectedFacilityType = this.value;// Get selected facility type
+                          // Display the selected facility type and ask for postal code
                             displayBotMessage(`<div class="bot-message"><strong>Bot:</strong> You have selected: ${selectedFacilityType}<br><br>Please enter the postal code</div>`);
                             document.getElementById('user-input-container').innerHTML = `<input type="text" id="postal-code" placeholder="Type your message...."><button id="submit-postal-code">Send</button>`;
-                            
+                            /* Provide input field for postal code*/
+                            /* Event listener for postal code submission*/
                             document.getElementById('submit-postal-code').addEventListener('click', function() {
                                 const postalCode = document.getElementById('postal-code').value;
+                                /* Validate postal code forma*/
                                 if (!postalCode || !/^\d{6}$/.test(postalCode)) {
                                     displayBotMessage('Please enter a valid 6-digit postal code.');
                                     document.getElementById('postal-code').value = '';
                                 } else {
                                     displayUserMessage(postalCode);
                                     document.getElementById('postal-code').value = '';
+
+                                    /*Fetch data from server based on facility type and postal code*/
 
                                     fetch(`http://localhost:5050/get_data?facility_type=${selectedFacilityType}&postal_code=${postalCode}`)
                                         .then(response => response.json())
