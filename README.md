@@ -1,4 +1,4 @@
-# Health-Chatbot
+# Health-Clinic-Bot
 Principles of Data Science (CS5530) - Project Repository 
 
 Team Members: Seth Emery, Shreyan Reddy Gangwar, Lavanya Ghanathey, Ankitha Srirama Reddy
@@ -11,7 +11,7 @@ Team Members: Seth Emery, Shreyan Reddy Gangwar, Lavanya Ghanathey, Ankitha Srir
 
 Pull Repository
 
-    git clone https://github.com/collaboratorsje/Health-Chatbot.git
+    git clone https://github.com/collaboratorsje/Health-Clinic-Bot.git
 
 Virtual Environment Setup
 
@@ -38,6 +38,10 @@ Open in browser at http://127.0.0.1:5050
 
 ### Mac
 Note: The Mac setup is similar to the Windows setup, but with slight command differences.
+
+Pull Repository
+
+    git clone https://github.com/collaboratorsje/Health-Clinic-Bot.git
 
 Virtual Environment Setup
 
